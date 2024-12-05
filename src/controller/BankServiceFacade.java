@@ -1,6 +1,9 @@
 package controller;
 
 import model.Account;
+import model.AccountNotFoundException;
+import model.InsufficientFundsException;
+import model.InvalidAmountException;
 
 public class BankServiceFacade {
     private BankController bankController;
@@ -10,15 +13,30 @@ public class BankServiceFacade {
     }
 
     public void depositMoney(Account account, double amount) {
-        bankController.depositMoney(account, amount);
+        try {
+            bankController.deposit(account, amount);
+            System.out.println("Gửi tiền thành công!");
+        } catch (InvalidAmountException e) {
+            System.out.println("Lỗi: " + e.getMessage());
+        }
     }
 
     public void withdrawMoney(Account account, double amount) {
-        bankController.withdrawMoney(account, amount);
+        try {
+            bankController.withdraw(account, amount);
+            System.out.println("Rút tiền thành công!");
+        } catch (InsufficientFundsException | InvalidAmountException e) {
+            System.out.println("Lỗi: " + e.getMessage());
+        }
     }
 
     public void transferMoney(Account fromAccount, Account toAccount, double amount) {
-        bankController.transferMoney(fromAccount, toAccount, amount);
+        try {
+            bankController.transfer(fromAccount, toAccount, amount);
+            System.out.println("Chuyển tiền thành công!");
+        } catch (InsufficientFundsException | InvalidAmountException e) {
+            System.out.println("Lỗi: " + e.getMessage());
+        }
     }
 
     public double checkBalance(Account account) {

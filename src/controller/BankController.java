@@ -1,48 +1,48 @@
 package controller;
 
 import model.Account;
-import storage.CsvFileStorage;
+import model.AccountNotFoundException;
+import model.InsufficientFundsException;
+import model.InvalidAmountException;
 
 import java.util.List;
 
 public class BankController {
     private List<Account> accounts;
-    private CsvFileStorage csvFileStorage;
 
     public BankController(List<Account> accounts) {
         this.accounts = accounts;
-        this.csvFileStorage = CsvFileStorage.getInstance();
     }
 
-    public Account findAccountByEmail(String email, String password) {
+    public Account findAccountByEmail(String email, String password) throws AccountNotFoundException {
         for (Account account : accounts) {
             if (account.getCustomer().getEmail().equals(email) && account.getCustomer().getPassword().equals(password)) {
                 return account;
             }
         }
-        return null;
+        throw new AccountNotFoundException("Tài khoản không tồn tại hoặc mật khẩu không đúng.");
     }
 
-    public void depositMoney(Account account, double amount) {
-        account.deposit(amount);
-        csvFileStorage.writeAccountData(accounts, "accounts.csv");
-    }
-
-    public void withdrawMoney(Account account, double amount) {
-        if (account.withdraw(amount)) {
-            csvFileStorage.writeAccountData(accounts, "accounts.csv");
-        } else {
-            System.out.println("Insufficient balance.");
+    public void withdraw(Account account, double amount) throws InsufficientFundsException, InvalidAmountException {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Số tiền rút phải lớn hơn 0.");
         }
+        if (account.getBalance() < amount) {
+            throw new InsufficientFundsException("Số dư không đủ để thực hiện giao dịch.");
+        }
+        account.setBalance(account.getBalance() - amount);
     }
 
-    public void transferMoney(Account fromAccount, Account toAccount, double amount) {
-        if (fromAccount.withdraw(amount)) {
-            toAccount.deposit(amount);
-            csvFileStorage.writeAccountData(accounts, "accounts.csv");
-        } else {
-            System.out.println("Insufficient balance.");
+    public void deposit(Account account, double amount) throws InvalidAmountException {
+        if (amount <= 0) {
+            throw new InvalidAmountException("Số tiền gửi phải lớn hơn 0.");
         }
+        account.setBalance(account.getBalance() + amount);
+    }
+
+    public void transfer(Account fromAccount, Account toAccount, double amount) throws InsufficientFundsException, InvalidAmountException {
+        withdraw(fromAccount, amount);
+        deposit(toAccount, amount);
     }
 
     public double checkBalance(Account account) {
