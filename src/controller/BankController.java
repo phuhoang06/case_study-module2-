@@ -14,14 +14,25 @@ public class BankController {
         this.accounts = accounts;
     }
 
-    public Account findAccountByEmail(String email, String password) throws AccountNotFoundException {
+    public Account findAccountByEmail(String email) throws AccountNotFoundException {
         for (Account account : accounts) {
-            if (account.getCustomer().getEmail().equals(email) && account.getCustomer().getPassword().equals(password)) {
+            if (account.getCustomer().getEmail().equals(email)) {
                 return account;
             }
         }
-        throw new AccountNotFoundException("Tài khoản không tồn tại hoặc mật khẩu không đúng.");
+        throw new AccountNotFoundException("Tài khoản không tồn tại.");
     }
+
+    public boolean validateAccount(String email, String password) {
+        for (Account account : accounts) {
+            if (account.getCustomer().getEmail().equals(email) && account.getCustomer().getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     public void withdraw(Account account, double amount) throws InsufficientFundsException, InvalidAmountException {
         if (amount <= 0) {

@@ -1,6 +1,7 @@
 import controller.BankController;
 import controller.BankServiceFacade;
 import model.*;
+import storage.CsvFileStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,16 +9,10 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws AccountNotFoundException {
-        List<Account> accounts = new ArrayList<>();
+        CsvFileStorage storage = CsvFileStorage.getInstance();
 
-        // Tạo khách hàng và tài khoản bằng Factory Pattern
-        Customer customer1 = CustomerFactory.createCustomer(1, "John Doe", "john.doe@example.com", "password123");
-        Account account1 = AccountFactory.createAccount(1, "John's Savings", 1000.0, customer1);
-        accounts.add(account1);
-
-        Customer customer2 = CustomerFactory.createCustomer(2, "Jane Doe", "jane.doe@example.com", "password456");
-        Account account2 = AccountFactory.createAccount(2, "Jane's Savings", 500.0, customer2);
-        accounts.add(account2);
+        // Đọc dữ liệu từ file CSV
+        List<Account> accounts = storage.readAccountData("accounts.csv");
 
         // Khởi tạo BankController
         BankController bankController = new BankController(accounts);
@@ -43,11 +38,16 @@ public class Main {
             System.out.print("Nhập mật khẩu: ");
             String password = scanner.next();
 
-            try {
-                loggedInAccount = bankController.findAccountByEmail(email, password);
-                System.out.println("Đăng nhập thành công! Chào mừng " + loggedInAccount.getCustomer().getName());
-            } catch (AccountNotFoundException e) {
-                System.out.println("Lỗi: " + e.getMessage());
+            if (bankController.validateAccount(email, password)) {
+                try {
+                    loggedInAccount = bankController.findAccountByEmail(email);
+                    System.out.println("Đăng nhập thành công! Chào mừng " + loggedInAccount.getCustomer().getName());
+                } catch (AccountNotFoundException e) {
+                    System.out.println("Lỗi: " + e.getMessage());
+                    return;
+                }
+            } else {
+                System.out.println("Email hoặc mật khẩu không đúng.");
                 return;
             }
 
@@ -76,6 +76,10 @@ public class Main {
 
             // Thêm tài khoản mới vào danh sách
             accounts.add(newAccount);
+
+            // Ghi lại dữ liệu vào file CSV
+            storage.writeAccountData(accounts, "accounts.csv");
+
             System.out.println("Tài khoản đã được tạo thành công!");
 
             loggedInAccount = newAccount;
@@ -111,11 +115,19 @@ public class Main {
                     System.out.print("Nhập email người nhận: ");
                     scanner.nextLine();  // Consume newline
                     String recipientEmail = scanner.nextLine();
-                    Account recipientAccount = bankController.findAccountByEmail(recipientEmail, loggedInAccount.getCustomer().getPassword());
-                    if (recipientAccount == null) {
+                    Account recipientAccount = null;
+                    try {
+                        recipientAccount = bankController.findAccountByEmail(recipientEmail);
+                    } catch (AccountNotFoundException e) {
                         System.out.println("Không tìm thấy người nhận.");
                         break;
                     }
+
+                    if (!bankController.validateAccount(recipientEmail, loggedInAccount.getCustomer().getPassword())) {
+                        System.out.println("Mật khẩu không hợp lệ.");
+                        break;
+                    }
+
                     System.out.print("Nhập số tiền chuyển: ");
                     double transferAmount = scanner.nextDouble();
                     bankFacade.transferMoney(loggedInAccount, recipientAccount, transferAmount);

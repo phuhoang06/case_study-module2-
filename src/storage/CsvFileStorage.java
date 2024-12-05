@@ -1,9 +1,14 @@
 package storage;
 
 import model.Account;
+import model.Customer;
+import model.CustomerFactory;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CsvFileStorage {
@@ -46,5 +51,34 @@ public class CsvFileStorage {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Account> readAccountData(String fileName) {
+        List<Account> accounts = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            // Bỏ qua header
+            br.readLine();
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(COMMA_DELIMITER);
+                if (values.length == 5) {
+                    int accountId = Integer.parseInt(values[0]);
+                    String accountName = values[1];
+                    double balance = Double.parseDouble(values[2]);
+                    String email = values[3];
+                    String password = values[4];
+
+                    Customer customer = CustomerFactory.createCustomer(accountId, "Unknown", email, password);
+                    Account account = new Account(accountId, accountName, balance, customer);
+                    accounts.add(account);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return accounts;
     }
 }
