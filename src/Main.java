@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws AccountNotFoundException {
         List<Account> accounts = new ArrayList<>();
 
         // Tạo khách hàng và tài khoản bằng Factory Pattern

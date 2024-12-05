@@ -32,7 +32,7 @@ public class CsvFileStorage {
             fileWriter.append(FILE_HEADER);
             fileWriter.append(NEW_LINE_SEPARATOR);
             for (Account account : accounts) {
-                fileWriter.append(String.valueOf(account.getAccountId()));
+                fileWriter.append(String.valueOf(account.getId()));
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(account.getAccountName());
                 fileWriter.append(COMMA_DELIMITER);

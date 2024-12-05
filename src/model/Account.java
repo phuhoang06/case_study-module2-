@@ -1,20 +1,20 @@
 package model;
 
 public class Account {
-    private int accountId;
+    private int id;
     private String accountName;
     private double balance;
     private Customer customer;
 
-    public Account(int accountId, String accountName, double balance, Customer customer) {
-        this.accountId = accountId;
+    public Account(int id, String accountName, double balance, Customer customer) {
+        this.id = id;
         this.accountName = accountName;
         this.balance = balance;
         this.customer = customer;
     }
 
-    public int getAccountId() {
-        return accountId;
+    public int getId() {
+        return id;
     }
 
     public String getAccountName() {
@@ -25,19 +25,11 @@ public class Account {
         return balance;
     }
 
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
     public Customer getCustomer() {
         return customer;
-    }
-
-    public void deposit(double amount) {
-        this.balance += amount;
-    }
-
-    public boolean withdraw(double amount) {
-        if (this.balance >= amount) {
-            this.balance -= amount;
-            return true;
-        }
-        return false;
     }
 }
