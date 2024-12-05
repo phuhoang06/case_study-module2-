@@ -8,7 +8,6 @@ import java.util.List;
 
 public class CsvFileStorage {
     private static CsvFileStorage instance;
-
     private static final String COMMA_DELIMITER = ",";
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String FILE_HEADER = "accountId,name,balance,email,password";
