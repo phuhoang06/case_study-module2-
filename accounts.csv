@@ -1,0 +1,3 @@
+accountId,name,balance,email,password
+1,John's Savings,100.0,john.doe@example.com,password123
+2,Jane's Savings,500.0,jane.doe@example.com,password456

@@ -4,7 +4,6 @@ import model.Account;
 import model.Customer;
 import model.AccountFactory;
 import model.CustomerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         List<Account> accounts = new ArrayList<>();
 
-        // Create customers and accounts using Factory Pattern
+        // Tạo khách hàng và tài khoản bằng Factory Pattern
         Customer customer1 = CustomerFactory.createCustomer(1, "John Doe", "john.doe@example.com", "password123");
         Account account1 = AccountFactory.createAccount(1, "John's Savings", 1000.0, customer1);
         accounts.add(account1);
@@ -22,15 +21,15 @@ public class Main {
         Account account2 = AccountFactory.createAccount(2, "Jane's Savings", 500.0, customer2);
         accounts.add(account2);
 
-        // Initialize BankController
+        // Khởi tạo BankController
         BankController bankController = new BankController(accounts);
 
-        // Initialize BankServiceFacade
+        // Khởi tạo BankServiceFacade
         BankServiceFacade bankFacade = new BankServiceFacade(bankController);
 
         Scanner scanner = new Scanner(System.in);
 
-        // Login
+        // Đăng nhập
         System.out.print("Enter email: ");
         String email = scanner.nextLine();
         System.out.print("Enter password: ");
@@ -87,4 +86,11 @@ public class Main {
                     System.out.println("Your balance is: " + balance);
                     break;
                 case 5:
-                    System
+                    System.out.println("Exiting...");
+                    return;
+                default:
+                    System.out.println("Invalid option, please try again.");
+            }
+        }
+    }
+}
