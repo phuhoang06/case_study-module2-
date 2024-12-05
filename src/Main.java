@@ -4,6 +4,7 @@ import model.Account;
 import model.Customer;
 import model.AccountFactory;
 import model.CustomerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -50,7 +51,8 @@ public class Main {
             System.out.println("2. Withdraw");
             System.out.println("3. Transfer");
             System.out.println("4. Check Balance");
-            System.out.println("5. Exit");
+            System.out.println("5. Create a new Account");
+            System.out.println("6. Exit");
 
             int choice = scanner.nextInt();
 
@@ -86,6 +88,37 @@ public class Main {
                     System.out.println("Your balance is: " + balance);
                     break;
                 case 5:
+                    // Thêm chức năng tạo tài khoản mới
+                    System.out.println("Create a new account:");
+
+                    scanner.nextLine();  // Consume newline
+                    System.out.print("Enter customer name: ");
+                    String customerName = scanner.nextLine();
+                    System.out.print("Enter customer email: ");
+                    String customerEmail = scanner.nextLine();
+                    System.out.print("Enter customer password: ");
+                    String customerPassword = scanner.nextLine();
+
+                    System.out.print("Enter account name: ");
+                    String accountName = scanner.nextLine();
+                    System.out.print("Enter initial balance: ");
+                    double initialBalance = scanner.nextDouble();
+
+                    // Tạo khách hàng mới
+                    Customer newCustomer = CustomerFactory.createCustomer(accounts.size() + 1, customerName, customerEmail, customerPassword);
+
+                    // Tạo tài khoản mới
+                    Account newAccount = AccountFactory.createAccount(accounts.size() + 1, accountName, initialBalance, newCustomer);
+
+                    // Thêm tài khoản mới vào danh sách
+                    accounts.add(newAccount);
+                    System.out.println("Account created successfully!");
+
+                    // Ghi lại dữ liệu tài khoản vào file CSV
+                    bankFacade.depositMoney(newAccount, 0);  // Ghi lại tài khoản vào file
+
+                    break;
+                case 6:
                     System.out.println("Exiting...");
                     return;
                 default:
