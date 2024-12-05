@@ -23,14 +23,15 @@ public class BankController {
         throw new AccountNotFoundException("Tài khoản không tồn tại.");
     }
 
-    public boolean validateAccount(String email, String password) {
+    public Account findAccountByEmailAndPassword(String email, String password) throws AccountNotFoundException {
         for (Account account : accounts) {
             if (account.getCustomer().getEmail().equals(email) && account.getCustomer().getPassword().equals(password)) {
-                return true;
+                return account;
             }
         }
-        return false;
+        throw new AccountNotFoundException("Tài khoản không tồn tại hoặc mật khẩu không đúng.");
     }
+
 
 
 

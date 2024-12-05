@@ -38,16 +38,11 @@ public class Main {
             System.out.print("Nhập mật khẩu: ");
             String password = scanner.next();
 
-            if (bankController.validateAccount(email, password)) {
-                try {
-                    loggedInAccount = bankController.findAccountByEmail(email);
-                    System.out.println("Đăng nhập thành công! Chào mừng " + loggedInAccount.getCustomer().getName());
-                } catch (AccountNotFoundException e) {
-                    System.out.println("Lỗi: " + e.getMessage());
-                    return;
-                }
-            } else {
-                System.out.println("Email hoặc mật khẩu không đúng.");
+            try {
+                loggedInAccount = bankController.findAccountByEmailAndPassword(email, password);
+                System.out.println("Đăng nhập thành công! Chào mừng " + loggedInAccount.getCustomer().getName());
+            } catch (AccountNotFoundException e) {
+                System.out.println("Lỗi: " + e.getMessage());
                 return;
             }
 
@@ -120,11 +115,6 @@ public class Main {
                         recipientAccount = bankController.findAccountByEmail(recipientEmail);
                     } catch (AccountNotFoundException e) {
                         System.out.println("Không tìm thấy người nhận.");
-                        break;
-                    }
-
-                    if (!bankController.validateAccount(recipientEmail, loggedInAccount.getCustomer().getPassword())) {
-                        System.out.println("Mật khẩu không hợp lệ.");
                         break;
                     }
 
