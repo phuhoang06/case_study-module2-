@@ -22,136 +22,150 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Chọn giữa đăng nhập hoặc đăng ký
-        System.out.println("Chào mừng đến với hệ thống ngân hàng");
-        System.out.println("1. Đăng nhập");
-        System.out.println("2. Đăng ký tài khoản mới");
-        System.out.print("Chọn một tùy chọn (1 hoặc 2): ");
-        int choice = scanner.nextInt();
-
-        Account loggedInAccount = null;
-
-        if (choice == 1) {
-            // Đăng nhập
-            System.out.print("Nhập email: ");
-            String email = scanner.next();
-            System.out.print("Nhập mật khẩu: ");
-            String password = scanner.next();
-
-            try {
-                loggedInAccount = bankController.findAccountByEmailAndPassword(email, password);
-                System.out.println("Đăng nhập thành công! Chào mừng " + loggedInAccount.getCustomer().getName());
-            } catch (AccountNotFoundException e) {
-                System.out.println("Lỗi: " + e.getMessage());
-                return;
-            }
-
-        } else if (choice == 2) {
-            // Đăng ký tài khoản mới
-            System.out.println("Đăng ký tài khoản mới:");
-
-            scanner.nextLine();  // Consume newline
-            System.out.print("Nhập tên khách hàng: ");
-            String customerName = scanner.nextLine();
-            System.out.print("Nhập email khách hàng: ");
-            String customerEmail = scanner.nextLine();
-
-            // Kiểm tra xem email đã tồn tại chưa
-            while (isEmailExist(accounts, customerEmail)) {
-                System.out.println("Email đã tồn tại, vui lòng nhập email khác.");
-                System.out.print("Nhập email khách hàng: ");
-                customerEmail = scanner.nextLine();
-            }
-
-            System.out.print("Nhập mật khẩu khách hàng: ");
-            String customerPassword = scanner.nextLine();
-
-            // Kiểm tra tên tài khoản có tồn tại hay không
-            String accountName = "";
-            boolean isAccountNameUnique;
-            do {
-                isAccountNameUnique = true;
-                System.out.print("Nhập tên tài khoản: ");
-                accountName = scanner.nextLine();
-
-                if (isAccountNameExist(accounts, accountName)) {
-                    System.out.println("Tên tài khoản đã tồn tại. Vui lòng nhập tên tài khoản khác.");
-                    isAccountNameUnique = false;
-                }
-            } while (!isAccountNameUnique);
-
-            System.out.print("Nhập số dư ban đầu: ");
-            double initialBalance = scanner.nextDouble();
-
-            // Tạo khách hàng mới
-            Customer newCustomer = CustomerFactory.createCustomer(accounts.size() + 1, customerName, customerEmail, customerPassword);
-
-            // Tạo tài khoản mới
-            Account newAccount = AccountFactory.createAccount(accounts.size() + 1, accountName, initialBalance, newCustomer);
-
-            // Thêm tài khoản mới vào danh sách
-            accounts.add(newAccount);
-
-            // Ghi lại dữ liệu vào file CSV
-            storage.writeAccountData(accounts, "accounts.csv");
-
-            System.out.println("Tài khoản đã được tạo thành công!");
-
-            loggedInAccount = newAccount;
-            System.out.println("Đăng nhập thành công! Chào mừng " + loggedInAccount.getCustomer().getName());
-        } else {
-            System.out.println("Tùy chọn không hợp lệ.");
-            return;
-        }
-
-        // Menu chính sau khi đăng nhập thành công
+        // Phần lựa chọn đăng nhập/đăng ký
         while (true) {
-            System.out.println("\nChọn một tùy chọn:");
-            System.out.println("1. Gửi tiền");
-            System.out.println("2. Rút tiền");
-            System.out.println("3. Chuyển tiền");
-            System.out.println("4. Kiểm tra số dư");
-            System.out.println("5. Thoát");
+            System.out.println("Chào mừng đến với hệ thống ngân hàng");
+            System.out.println("1. Đăng nhập");
+            System.out.println("2. Đăng ký tài khoản mới");
+            System.out.println("3. Thoát");
+            System.out.print("Chọn một tùy chọn (1, 2, hoặc 3): ");
+            int choice = scanner.nextInt();
 
-            int menuChoice = scanner.nextInt();
+            Account loggedInAccount = null;
 
-            switch (menuChoice) {
-                case 1:
-                    System.out.print("Nhập số tiền gửi: ");
-                    double depositAmount = scanner.nextDouble();
-                    bankFacade.depositMoney(loggedInAccount, depositAmount);
-                    break;
-                case 2:
-                    System.out.print("Nhập số tiền rút: ");
-                    double withdrawAmount = scanner.nextDouble();
-                    bankFacade.withdrawMoney(loggedInAccount, withdrawAmount);
-                    break;
-                case 3:
-                    System.out.print("Nhập email người nhận: ");
-                    scanner.nextLine();  // Consume newline
-                    String recipientEmail = scanner.nextLine();
-                    Account recipientAccount = null;
-                    try {
-                        recipientAccount = bankController.findAccountByEmail(recipientEmail);
-                    } catch (AccountNotFoundException e) {
-                        System.out.println("Không tìm thấy người nhận.");
-                        break;
+            if (choice == 1) {
+                // Đăng nhập
+                System.out.print("Nhập email: ");
+                String email = scanner.next();
+                System.out.print("Nhập mật khẩu: ");
+                String password = scanner.next();
+
+                try {
+                    loggedInAccount = bankController.findAccountByEmailAndPassword(email, password);
+                    System.out.println("Đăng nhập thành công! Chào mừng " + loggedInAccount.getCustomer().getName());
+                } catch (AccountNotFoundException e) {
+                    System.out.println("Lỗi: " + e.getMessage());
+                    continue;
+                }
+
+                // Menu chính sau khi đăng nhập thành công
+                while (true) {
+                    System.out.println("\nChọn một tùy chọn:");
+                    System.out.println("1. Gửi tiền");
+                    System.out.println("2. Rút tiền");
+                    System.out.println("3. Chuyển tiền");
+                    System.out.println("4. Kiểm tra số dư");
+                    System.out.println("5. Đăng xuất");
+                    System.out.println("6. Thoát");
+
+                    int menuChoice = scanner.nextInt();
+
+                    switch (menuChoice) {
+                        case 1:
+                            System.out.print("Nhập số tiền gửi: ");
+                            double depositAmount = scanner.nextDouble();
+                            bankFacade.depositMoney(loggedInAccount, depositAmount);
+                            break;
+                        case 2:
+                            System.out.print("Nhập số tiền rút: ");
+                            double withdrawAmount = scanner.nextDouble();
+                            bankFacade.withdrawMoney(loggedInAccount, withdrawAmount);
+                            break;
+                        case 3:
+                            System.out.print("Nhập email người nhận: ");
+                            scanner.nextLine();  // Consume newline
+                            String recipientEmail = scanner.nextLine();
+                            Account recipientAccount = null;
+                            try {
+                                recipientAccount = bankController.findAccountByEmail(recipientEmail);
+                            } catch (AccountNotFoundException e) {
+                                System.out.println("Không tìm thấy người nhận.");
+                                break;
+                            }
+
+                            System.out.print("Nhập số tiền chuyển: ");
+                            double transferAmount = scanner.nextDouble();
+                            bankFacade.transferMoney(loggedInAccount, recipientAccount, transferAmount);
+                            break;
+                        case 4:
+                            double balance = bankFacade.checkBalance(loggedInAccount);
+                            System.out.println("Số dư tài khoản của bạn là: " + balance);
+                            break;
+                        case 5:
+                            System.out.println("Đăng xuất thành công!");
+                            break;
+                        case 6:
+                            System.out.println("Cảm ơn bạn đã sử dụng dịch vụ ngân hàng của chúng tôi!");
+                            scanner.close();
+                            return;
+                        default:
+                            System.out.println("Tùy chọn không hợp lệ.");
                     }
 
-                    System.out.print("Nhập số tiền chuyển: ");
-                    double transferAmount = scanner.nextDouble();
-                    bankFacade.transferMoney(loggedInAccount, recipientAccount, transferAmount);
-                    break;
-                case 4:
-                    double balance = bankFacade.checkBalance(loggedInAccount);
-                    System.out.println("Số dư tài khoản của bạn là: " + balance);
-                    break;
-                case 5:
-                    System.out.println("Cảm ơn bạn đã sử dụng dịch vụ ngân hàng của chúng tôi!");
-                    scanner.close();
-                    return;
-                default:
-                    System.out.println("Tùy chọn không hợp lệ.");
+                    // Nếu người dùng chọn đăng xuất, quay lại màn hình chính
+                    if (menuChoice == 5) {
+                        break; // Quay lại phần lựa chọn đăng nhập/đăng ký
+                    }
+                }
+            } else if (choice == 2) {
+                // Đăng ký tài khoản mới
+                System.out.println("Đăng ký tài khoản mới:");
+
+                scanner.nextLine();  // Consume newline
+                System.out.print("Nhập tên khách hàng: ");
+                String customerName = scanner.nextLine();
+                System.out.print("Nhập email khách hàng: ");
+                String customerEmail = scanner.nextLine();
+
+                // Kiểm tra xem email đã tồn tại chưa
+                while (isEmailExist(accounts, customerEmail)) {
+                    System.out.println("Email đã tồn tại, vui lòng nhập email khác.");
+                    System.out.print("Nhập email khách hàng: ");
+                    customerEmail = scanner.nextLine();
+                }
+
+                System.out.print("Nhập mật khẩu khách hàng: ");
+                String customerPassword = scanner.nextLine();
+
+                // Kiểm tra tên tài khoản có tồn tại hay không
+                String accountName = "";
+                boolean isAccountNameUnique;
+                do {
+                    isAccountNameUnique = true;
+                    System.out.print("Nhập tên tài khoản: ");
+                    accountName = scanner.nextLine();
+
+                    if (isAccountNameExist(accounts, accountName)) {
+                        System.out.println("Tên tài khoản đã tồn tại. Vui lòng nhập tên tài khoản khác.");
+                        isAccountNameUnique = false;
+                    }
+                } while (!isAccountNameUnique);
+
+                System.out.print("Nhập số dư ban đầu: ");
+                double initialBalance = scanner.nextDouble();
+
+                // Tạo khách hàng mới
+                Customer newCustomer = CustomerFactory.createCustomer(accounts.size() + 1, customerName, customerEmail, customerPassword);
+
+                // Tạo tài khoản mới
+                Account newAccount = AccountFactory.createAccount(accounts.size() + 1, accountName, initialBalance, newCustomer);
+
+                // Thêm tài khoản mới vào danh sách
+                accounts.add(newAccount);
+
+                // Ghi lại dữ liệu vào file CSV
+                storage.writeAccountData(accounts, "accounts.csv");
+
+                System.out.println("Tài khoản đã được tạo thành công!");
+
+                loggedInAccount = newAccount;
+                System.out.println("Đăng nhập thành công! Chào mừng " + loggedInAccount.getCustomer().getName());
+            } else if (choice == 3) {
+                System.out.println("Cảm ơn bạn đã sử dụng dịch vụ ngân hàng!");
+                scanner.close();
+                return;
+            } else {
+                System.out.println("Tùy chọn không hợp lệ.");
             }
         }
     }
@@ -176,5 +190,6 @@ public class Main {
         return false;
     }
 }
+
 
 
