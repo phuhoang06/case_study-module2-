@@ -55,6 +55,14 @@ public class Main {
             String customerName = scanner.nextLine();
             System.out.print("Nhập email khách hàng: ");
             String customerEmail = scanner.nextLine();
+
+            // Kiểm tra xem email đã tồn tại chưa
+            while (isEmailExist(accounts, customerEmail)) {
+                System.out.println("Email đã tồn tại, vui lòng nhập email khác.");
+                System.out.print("Nhập email khách hàng: ");
+                customerEmail = scanner.nextLine();
+            }
+
             System.out.print("Nhập mật khẩu khách hàng: ");
             String customerPassword = scanner.nextLine();
 
@@ -135,4 +143,15 @@ public class Main {
             }
         }
     }
+
+    // Kiểm tra xem email đã tồn tại trong danh sách tài khoản chưa
+    private static boolean isEmailExist(List<Account> accounts, String email) {
+        for (Account account : accounts) {
+            if (account.getCustomer().getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+
