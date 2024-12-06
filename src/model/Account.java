@@ -5,7 +5,6 @@ public class Account {
     private String accountName;
     private double balance;
     private Customer customer;
-
     public Account(int id, String accountName, double balance, Customer customer) {
         this.id = id;
         this.accountName = accountName;
