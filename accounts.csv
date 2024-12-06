@@ -1,9 +1,3 @@
 accountId,name,balance,email,password
-1,John's Savings,1000.0,john.doe@example.com,password123
-2,Jane's Savings,500.0,jane.doe@example.com,password456
-3,phu,1000000.0,chjnnfood@gmail.com,123
-4,mạnh,9.99999999999999E14,manhgiundat@gmail.com,123
-5,Long,1.0,ALONGTEAPLUS@gmail.com,123
-6,phu,122222.0,chjnnfood@gmail.com,123
-7,manhgiundat123,100.0,manhmuadat@gmail.com,123
-8,phu21,10000.0,hoangphu@gmail.com,123
+1,phu1,100000.0,chjnnfood@gmail.com,123
+2,manh2k,1.0E7,manhgiundat@gmail.com,123
