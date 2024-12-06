@@ -66,8 +66,20 @@ public class Main {
             System.out.print("Nhập mật khẩu khách hàng: ");
             String customerPassword = scanner.nextLine();
 
-            System.out.print("Nhập tên tài khoản: ");
-            String accountName = scanner.nextLine();
+            // Kiểm tra tên tài khoản có tồn tại hay không
+            String accountName = "";
+            boolean isAccountNameUnique;
+            do {
+                isAccountNameUnique = true;
+                System.out.print("Nhập tên tài khoản: ");
+                accountName = scanner.nextLine();
+
+                if (isAccountNameExist(accounts, accountName)) {
+                    System.out.println("Tên tài khoản đã tồn tại. Vui lòng nhập tên tài khoản khác.");
+                    isAccountNameUnique = false;
+                }
+            } while (!isAccountNameUnique);
+
             System.out.print("Nhập số dư ban đầu: ");
             double initialBalance = scanner.nextDouble();
 
@@ -153,5 +165,16 @@ public class Main {
         }
         return false;
     }
+
+    // Kiểm tra xem tên tài khoản đã tồn tại trong danh sách tài khoản chưa
+    private static boolean isAccountNameExist(List<Account> accounts, String accountName) {
+        for (Account account : accounts) {
+            if (account.getAccountName().equals(accountName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+
 
